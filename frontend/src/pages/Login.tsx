@@ -11,7 +11,7 @@ import { setAuth } from '../store/auth';
 import { toast } from '../lib/toast';
 
 const schema = z.object({
-  login: z.string().min(3, 'Login requis'),
+  login: z.string().min(3, 'Identifiant requis'),
   password: z.string().min(8, 'Mot de passe requis'),
 });
 
@@ -56,7 +56,7 @@ const Login = () => {
           </div>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
-              <label className="text-sm font-semibold">Username ou Email</label>
+              <label className="text-sm font-semibold">Nom d’utilisateur ou Email</label>
               <Input placeholder="john@mail.com" {...register('login')} />
               {errors.login && <p className="text-xs text-[var(--color-error)]">{errors.login.message}</p>}
             </div>

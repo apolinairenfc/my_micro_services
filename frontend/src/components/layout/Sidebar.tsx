@@ -37,11 +37,11 @@ const SidebarContent = () => (
           )
         }
       >
-        Admin Playground
+        Console admin
       </NavLink>
     </nav>
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 text-xs text-[var(--color-muted)]">
-      API #3 connector controls discussions + messages through API #1 and API #2.
+      Le connecteur API #3 orchestre discussions et messages via API #1 et API #2.
     </div>
   </div>
 );
@@ -58,7 +58,7 @@ const Sidebar = ({ isMobileOpen, onClose }: SidebarProps) => {
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm font-semibold">Menu</p>
               <Button variant="ghost" size="sm" onClick={onClose}>
-                Close
+                Fermer
               </Button>
             </div>
             <SidebarContent />

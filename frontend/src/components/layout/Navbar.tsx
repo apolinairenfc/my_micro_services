@@ -12,7 +12,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
 
   const handleLogout = () => {
     clearAuth();
-    toast.info('Logged out.');
+    toast.info('Déconnecté.');
     window.location.assign('/login');
   };
 
@@ -39,7 +39,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
           )}
           <ThemeToggle />
           <Button variant="outline" size="sm" onClick={handleLogout}>
-            Logout
+            Déconnexion
           </Button>
         </div>
       </div>

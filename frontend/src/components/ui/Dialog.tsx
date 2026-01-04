@@ -30,7 +30,7 @@ const Dialog = ({ open, title, description, onClose, children }: DialogProps) =>
             className="text-sm font-semibold text-[var(--color-muted)]"
             onClick={onClose}
           >
-            Close
+            Fermer
           </button>
         </div>
       </Card>

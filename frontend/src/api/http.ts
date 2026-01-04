@@ -26,7 +26,7 @@ const createClient = (clientBaseUrl: string): AxiosInstance => {
       const status = error?.response?.status;
       if (status === 401) {
         clearAuth();
-        toast.error('Session expired. Please login again.');
+        toast.error('Session expirée. Merci de vous reconnecter.');
         if (window.location.pathname !== '/login') {
           window.location.assign('/login');
         }

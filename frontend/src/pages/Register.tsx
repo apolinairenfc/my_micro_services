@@ -11,7 +11,7 @@ import { toast } from '../lib/toast';
 
 const schema = z
   .object({
-    username: z.string().min(3, 'Username requis').max(50, 'Username trop long'),
+    username: z.string().min(3, 'Nom d’utilisateur requis').max(50, 'Nom d’utilisateur trop long'),
     email: z.string().email('Email invalide'),
     password: z.string().min(8, 'Mot de passe trop court'),
     passwordConfirm: z.string().min(8, 'Confirmation requise'),
@@ -61,7 +61,7 @@ const Register = () => {
           </div>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
-              <label className="text-sm font-semibold">Username</label>
+              <label className="text-sm font-semibold">Nom d’utilisateur</label>
               <Input placeholder="john" {...register('username')} />
               {errors.username && (
                 <p className="text-xs text-[var(--color-error)]">{errors.username.message}</p>

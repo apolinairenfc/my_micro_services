@@ -28,7 +28,7 @@ Vite dev server proxies:
 - `/api2` -> `http://localhost:8002` (API #2)
 - `/api3` -> `http://localhost:8003` (API #3)
 
-The Admin Playground uses `/api1` and `/api2` to test all routes without CORS issues.
+La console admin utilise `/api1` et `/api2` pour tester toutes les routes sans soucis CORS.
 
 ## Scripts
 - `npm run dev` - start Vite dev server

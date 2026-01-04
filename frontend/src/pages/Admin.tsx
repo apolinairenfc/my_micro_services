@@ -59,7 +59,7 @@ const Admin = () => {
   const createUserMutation = useMutation({
     mutationFn: api1.createUser,
     onSuccess: () => {
-      toast.success('User créé.');
+      toast.success('Utilisateur créé.');
       setUserForm({ username: '', email: '', password: '', passwordConfirm: '' });
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
@@ -70,7 +70,7 @@ const Admin = () => {
     mutationFn: ({ id, payload }: { id: number; payload: { username?: string; email?: string } }) =>
       api1.updateUser(id, payload),
     onSuccess: () => {
-      toast.success('User mis à jour.');
+      toast.success('Utilisateur mis à jour.');
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
     onError: () => toast.error('Erreur mise à jour user.'),
@@ -79,7 +79,7 @@ const Admin = () => {
   const deleteUserMutation = useMutation({
     mutationFn: api1.deleteUser,
     onSuccess: () => {
-      toast.success('User supprimé.');
+      toast.success('Utilisateur supprimé.');
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
     onError: () => toast.error('Erreur suppression user.'),
@@ -149,9 +149,9 @@ const Admin = () => {
         api2.listDiscussions(),
         http.get('/health/services'),
       ]);
-      toast.success('Health check OK.');
+      toast.success('Vérification OK.');
     } catch {
-      toast.error('Health check en échec.');
+      toast.error('Vérification en échec.');
     }
   };
 
@@ -167,13 +167,13 @@ const Admin = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold">Admin Playground</h2>
+          <h2 className="text-2xl font-semibold">Console admin</h2>
           <p className="text-sm text-[var(--color-muted)]">
             Teste toutes les routes API1/API2 depuis le frontend.
           </p>
         </div>
         <Button variant="outline" onClick={healthChecks}>
-          Run health checks
+          Tester les services
         </Button>
       </div>
 
@@ -181,13 +181,13 @@ const Admin = () => {
         items={[
           {
             id: 'users',
-            label: 'API1 Users',
+            label: 'API1 Utilisateurs',
             content: (
               <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
                 <Card className="space-y-3">
                   <h4 className="text-sm font-semibold">Créer un utilisateur</h4>
                   <Input
-                    placeholder="username"
+                    placeholder="nom d'utilisateur"
                     value={userForm.username}
                     onChange={(event) => setUserForm({ ...userForm, username: event.target.value })}
                   />
@@ -197,13 +197,13 @@ const Admin = () => {
                     onChange={(event) => setUserForm({ ...userForm, email: event.target.value })}
                   />
                   <Input
-                    placeholder="password"
+                    placeholder="mot de passe"
                     type="password"
                     value={userForm.password}
                     onChange={(event) => setUserForm({ ...userForm, password: event.target.value })}
                   />
                   <Input
-                    placeholder="confirm password"
+                    placeholder="confirmer mot de passe"
                     type="password"
                     value={userForm.passwordConfirm}
                     onChange={(event) => setUserForm({ ...userForm, passwordConfirm: event.target.value })}
@@ -212,12 +212,12 @@ const Admin = () => {
                     onClick={() => createUserMutation.mutate(userForm)}
                     disabled={createUserMutation.isPending}
                   >
-                    Create user
+                    Créer l’utilisateur
                   </Button>
                 </Card>
                 <div className="space-y-3">
                   <Input
-                    placeholder="Filter username"
+                    placeholder="Filtrer par username"
                     value={userFilter}
                     onChange={(event) => setUserFilter(event.target.value)}
                   />
@@ -241,7 +241,7 @@ const Admin = () => {
                             })
                           }
                         >
-                          Quick rename
+                          Renommer
                         </Button>
                         <Button
                           size="sm"
@@ -253,14 +253,14 @@ const Admin = () => {
                             })
                           }
                         >
-                          Update email
+                          Changer l’email
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => deleteUserMutation.mutate(user.id)}
                         >
-                          Delete
+                          Supprimer
                         </Button>
                       </div>
                     </Card>
@@ -284,7 +284,7 @@ const Admin = () => {
                     }
                   />
                   <Input
-                    placeholder="content"
+                    placeholder="contenu"
                     value={messageForm.content}
                     onChange={(event) => setMessageForm({ ...messageForm, content: event.target.value })}
                   />
@@ -292,19 +292,19 @@ const Admin = () => {
                     onClick={() => createMessageMutation.mutate(messageForm)}
                     disabled={createMessageMutation.isPending}
                   >
-                    Create message
+                    Créer le message
                   </Button>
                 </Card>
 
                 <Card className="space-y-3">
-                  <h4 className="text-sm font-semibold">Update / Delete message</h4>
+                  <h4 className="text-sm font-semibold">Modifier / Supprimer un message</h4>
                   <Input
-                    placeholder="messageId"
+                    placeholder="id message"
                     value={updateMessageId}
                     onChange={(event) => setUpdateMessageId(event.target.value)}
                   />
                   <Input
-                    placeholder="new content"
+                    placeholder="nouveau contenu"
                     value={updateContent}
                     onChange={(event) => setUpdateContent(event.target.value)}
                   />
@@ -318,13 +318,13 @@ const Admin = () => {
                         })
                       }
                     >
-                      Update
+                      Modifier
                     </Button>
                     <Button
                       variant="ghost"
                       onClick={() => deleteMessageMutation.mutate(Number(updateMessageId))}
                     >
-                      Delete
+                      Supprimer
                     </Button>
                   </div>
                 </Card>
@@ -348,7 +348,7 @@ const Admin = () => {
                     <Card key={message.id} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-semibold">Message #{message.id}</p>
-                        <Badge>User {message.userId}</Badge>
+                        <Badge>Utilisateur {message.userId}</Badge>
                       </div>
                       <p className="text-sm">{message.content}</p>
                       <p className="text-xs text-[var(--color-muted)]">{formatDate(message.createdAt)}</p>
@@ -367,7 +367,7 @@ const Admin = () => {
                 <Card className="space-y-3">
                   <h4 className="text-sm font-semibold">Créer une discussion (API2)</h4>
                   <Input
-                    placeholder="title"
+                    placeholder="titre"
                     value={discussionForm.title}
                     onChange={(event) =>
                       setDiscussionForm({ ...discussionForm, title: event.target.value })
@@ -388,21 +388,21 @@ const Admin = () => {
                       })
                     }
                   >
-                    Create discussion
+                    Créer la discussion
                   </Button>
                 </Card>
 
                 <Card className="space-y-3">
-                  <h4 className="text-sm font-semibold">Update / Delete discussion</h4>
+                  <h4 className="text-sm font-semibold">Modifier / Supprimer une discussion</h4>
                   <Input
-                    placeholder="discussion id"
+                    placeholder="id discussion"
                     value={discussionForm.targetId}
                     onChange={(event) =>
                       setDiscussionForm({ ...discussionForm, targetId: event.target.value })
                     }
                   />
                   <Input
-                    placeholder="new title"
+                    placeholder="nouveau titre"
                     value={discussionForm.title}
                     onChange={(event) =>
                       setDiscussionForm({ ...discussionForm, title: event.target.value })
@@ -430,13 +430,13 @@ const Admin = () => {
                         })
                       }
                     >
-                      Update
+                      Modifier
                     </Button>
                     <Button
                       variant="ghost"
                       onClick={() => deleteDiscussionMutation.mutate(discussionForm.targetId)}
                     >
-                      Delete
+                      Supprimer
                     </Button>
                   </div>
                 </Card>
@@ -446,7 +446,7 @@ const Admin = () => {
                     <Card key={discussion.id} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-semibold">{discussion.title}</p>
-                        <Badge>{discussion.userIds.length} users</Badge>
+                        <Badge>{discussion.userIds.length} participants</Badge>
                       </div>
                       <p className="text-xs text-[var(--color-muted)]">{formatDate(discussion.createdAt)}</p>
                       <p className="text-xs text-[var(--color-muted)]">ID: {discussion.id}</p>

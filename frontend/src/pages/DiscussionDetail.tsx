@@ -95,7 +95,7 @@ const DiscussionDetail = () => {
   const handleAddParticipant = () => {
     const userId = resolveUserId(participantInput.trim());
     if (!userId) {
-      toast.error('User inconnu. Ajoute-le dans les contacts ou saisis son ID.');
+      toast.error('Utilisateur inconnu. Ajoute-le dans les contacts ou saisis son ID.');
       return;
     }
     const updated = Array.from(new Set([...participants, userId]));
@@ -142,12 +142,12 @@ const DiscussionDetail = () => {
         </div>
         <div className="flex flex-wrap gap-2">
           {participants.map((participant) => (
-            <Badge key={participant}>User {participant}</Badge>
+            <Badge key={participant}>Utilisateur {participant}</Badge>
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => setSettingsOpen(true)}>
-            Discussion settings
+            Paramètres
           </Button>
           <Button variant="ghost" onClick={handleLeave}>
             Quitter la discussion
@@ -175,7 +175,7 @@ const DiscussionDetail = () => {
                         : 'bg-[var(--color-bg-soft)] text-[var(--color-text)]'
                     }`}
                   >
-                    <p className="mb-1 text-xs opacity-70">User {message.userId}</p>
+                    <p className="mb-1 text-xs opacity-70">Utilisateur {message.userId}</p>
                     <p>{message.content}</p>
                   </div>
                 </div>
@@ -186,13 +186,13 @@ const DiscussionDetail = () => {
         </div>
         <div className="sticky bottom-0 flex gap-3 border-t border-[var(--color-border)] pt-4">
           <Input
-            placeholder="Type a message..."
+            placeholder="Écrire un message..."
             value={content}
             onChange={(event) => setContent(event.target.value)}
             onKeyDown={handleKeyDown}
           />
           <Button onClick={handleSend} disabled={mutation.isPending}>
-            Send
+            Envoyer
           </Button>
         </div>
       </Card>
@@ -212,7 +212,7 @@ const DiscussionDetail = () => {
                 value={participantInput}
                 onChange={(event) => setParticipantInput(event.target.value)}
               />
-              <Button onClick={handleAddParticipant}>Add</Button>
+              <Button onClick={handleAddParticipant}>Ajouter</Button>
             </div>
           </div>
           <div className="space-y-2">
@@ -220,13 +220,13 @@ const DiscussionDetail = () => {
             <div className="flex flex-wrap gap-2">
               {participants.map((participant) => (
                 <Badge key={participant} className="flex items-center gap-2">
-                  User {participant}
+                  Utilisateur {participant}
                   {participant !== currentUserId && (
                     <button
                       className="text-xs text-[var(--color-error)]"
                       onClick={() => handleRemoveParticipant(participant)}
                     >
-                      remove
+                      retirer
                     </button>
                   )}
                 </Badge>
@@ -279,7 +279,7 @@ const DiscussionDetail = () => {
                       toast.info('Contact supprimé.');
                     }}
                   >
-                    remove
+                    retirer
                   </button>
                 </div>
               ))}

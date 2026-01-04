@@ -71,7 +71,7 @@ const Discussions = () => {
     });
 
     if (unresolved.length > 0) {
-      toast.info(`Usernames inconnus: ${unresolved.join(', ')}`);
+      toast.info(`Identifiants inconnus: ${unresolved.join(', ')}`);
     }
 
     const merged = currentUserId ? Array.from(new Set([...userIds, currentUserId])) : userIds;
@@ -87,7 +87,7 @@ const Discussions = () => {
             Toutes les discussions où tu es participant.
           </p>
         </div>
-        <Button onClick={() => setIsOpen(true)}>New discussion</Button>
+        <Button onClick={() => setIsOpen(true)}>Nouvelle discussion</Button>
       </div>
 
       {isLoading && <LoadingState />}
@@ -135,7 +135,7 @@ const Discussions = () => {
               <Input value={title} onChange={(event) => setTitle(event.target.value)} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold">User IDs ou usernames (ex: 2,3,alice)</label>
+              <label className="text-sm font-semibold">IDs utilisateurs ou usernames (ex: 2,3,alice)</label>
               <Input
                 value={userIdsText}
                 onChange={(event) => setUserIdsText(event.target.value)}
@@ -143,10 +143,10 @@ const Discussions = () => {
             </div>
             <div className="flex items-center justify-end gap-3">
               <Button variant="ghost" onClick={() => setIsOpen(false)}>
-                Cancel
+                Annuler
               </Button>
               <Button onClick={handleCreate} disabled={mutation.isPending}>
-                Create
+                Créer
               </Button>
             </div>
           </Card>

@@ -16,7 +16,7 @@ const ThemeToggle = () => {
 
   return (
     <Button variant="ghost" size="sm" onClick={handleToggle}>
-      {mode === 'dark' ? 'Light' : 'Dark'}
+      {mode === 'dark' ? 'Clair' : 'Sombre'}
     </Button>
   );
 };
