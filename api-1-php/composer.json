@@ -1,0 +1,18 @@
+{
+  "name": "my/microservice-api1",
+  "description": "API #1 Users/Messages (Slim 4 + Eloquent)",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "slim/slim": "^4.12",
+    "slim/psr7": "^1.6",
+    "vlucas/phpdotenv": "^5.6",
+    "illuminate/database": "^10.0",
+    "firebase/php-jwt": "^6.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# Environment
+.env
+
+# Composer
+/vendor/
+composer.lock
+
+# Logs
+*.log
+
+# OS
+.DS_Store
