@@ -54,3 +54,13 @@ export const createMessage = async (discussionId: string, payload: { content: st
   const { data } = await http.post(`/chat/discussions/${discussionId}/messages`, payload);
   return data;
 };
+
+export const updateDiscussion = async (id: string, payload: { title?: string; userIds?: number[] }) => {
+  const { data } = await http.put(`/chat/discussions/${id}`, payload);
+  return data;
+};
+
+export const deleteDiscussion = async (id: string) => {
+  const { data } = await http.delete(`/chat/discussions/${id}`);
+  return data;
+};

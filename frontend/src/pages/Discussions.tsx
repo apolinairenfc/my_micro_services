@@ -11,6 +11,7 @@ import { getCurrentUserId } from '../store/auth';
 import { formatDate, parseUserIds } from '../lib/utils';
 import { toast } from '../lib/toast';
 import { Link } from 'react-router-dom';
+import { getContactId } from '../store/contacts';
 
 const Discussions = () => {
   const queryClient = useQueryClient();
@@ -38,13 +39,41 @@ const Discussions = () => {
     },
   });
 
-  const userIds = useMemo(() => parseUserIds(userIdsText), [userIdsText]);
+  const userIds = useMemo(() => {
+    const entries = userIdsText.split(',').map((value) => value.trim()).filter(Boolean);
+    const ids: number[] = [];
+    entries.forEach((entry) => {
+      const numeric = Number(entry);
+      if (Number.isInteger(numeric) && numeric > 0) {
+        ids.push(numeric);
+        return;
+      }
+      const mapped = getContactId(entry);
+      if (mapped) {
+        ids.push(mapped);
+      }
+    });
+    return Array.from(new Set([...parseUserIds(userIdsText), ...ids]));
+  }, [userIdsText]);
 
   const handleCreate = () => {
     if (!title.trim()) {
       toast.error('Le titre est requis.');
       return;
     }
+    const entries = userIdsText.split(',').map((value) => value.trim()).filter(Boolean);
+    const unresolved = entries.filter((entry) => {
+      const numeric = Number(entry);
+      if (Number.isInteger(numeric) && numeric > 0) {
+        return false;
+      }
+      return getContactId(entry) === null;
+    });
+
+    if (unresolved.length > 0) {
+      toast.info(`Usernames inconnus: ${unresolved.join(', ')}`);
+    }
+
     const merged = currentUserId ? Array.from(new Set([...userIds, currentUserId])) : userIds;
     mutation.mutate({ title, userIds: merged });
   };
@@ -106,7 +135,7 @@ const Discussions = () => {
               <Input value={title} onChange={(event) => setTitle(event.target.value)} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold">User IDs (ex: 2,3,4)</label>
+              <label className="text-sm font-semibold">User IDs ou usernames (ex: 2,3,alice)</label>
               <Input
                 value={userIdsText}
                 onChange={(event) => setUserIdsText(event.target.value)}

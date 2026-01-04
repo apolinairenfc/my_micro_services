@@ -23,6 +23,13 @@ cp .env.example .env
 
 Set `VITE_API_BASE_URL` to your API #3 base URL.
 
+Vite dev server proxies:
+- `/api1` -> `http://localhost:8001` (API #1)
+- `/api2` -> `http://localhost:8002` (API #2)
+- `/api3` -> `http://localhost:8003` (API #3)
+
+The Admin Playground uses `/api1` and `/api2` to test all routes without CORS issues.
+
 ## Scripts
 - `npm run dev` - start Vite dev server
 - `npm run build` - build for production

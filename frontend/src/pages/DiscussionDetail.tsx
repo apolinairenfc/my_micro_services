@@ -4,17 +4,23 @@ import { useParams } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
 import LoadingState from '../components/LoadingState';
-import { createMessage, fetchDiscussionDetail } from '../api/discussions';
+import { createMessage, deleteDiscussion, fetchDiscussionDetail, updateDiscussion } from '../api/discussions';
 import { getCurrentUserId } from '../store/auth';
 import { formatDate } from '../lib/utils';
 import { toast } from '../lib/toast';
+import Dialog from '../components/ui/Dialog';
+import { addContact, getContactId, listContacts, removeContact } from '../store/contacts';
+import Input from '../components/ui/Input';
 
 const DiscussionDetail = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [participantInput, setParticipantInput] = useState('');
+  const [contactUsername, setContactUsername] = useState('');
+  const [contactUserId, setContactUserId] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const currentUserId = getCurrentUserId();
 
@@ -33,6 +39,24 @@ const DiscussionDetail = () => {
     onError: () => {
       toast.error('Impossible d\'envoyer le message.');
     },
+  });
+
+  const updateDiscussionMutation = useMutation({
+    mutationFn: (payload: { title?: string; userIds?: number[] }) => updateDiscussion(id || '', payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['discussion', id] });
+      toast.success('Discussion mise à jour.');
+    },
+    onError: () => toast.error('Mise à jour impossible.'),
+  });
+
+  const deleteDiscussionMutation = useMutation({
+    mutationFn: () => deleteDiscussion(id || ''),
+    onSuccess: () => {
+      toast.success('Discussion supprimée.');
+      window.location.assign('/app/discussions');
+    },
+    onError: () => toast.error('Suppression impossible.'),
   });
 
   const discussion = data?.data.discussion;
@@ -60,6 +84,40 @@ const DiscussionDetail = () => {
 
   const participants = useMemo(() => discussion?.userIds || [], [discussion]);
 
+  const resolveUserId = (value: string): number | null => {
+    const numeric = Number(value);
+    if (Number.isInteger(numeric) && numeric > 0) {
+      return numeric;
+    }
+    return getContactId(value);
+  };
+
+  const handleAddParticipant = () => {
+    const userId = resolveUserId(participantInput.trim());
+    if (!userId) {
+      toast.error('User inconnu. Ajoute-le dans les contacts ou saisis son ID.');
+      return;
+    }
+    const updated = Array.from(new Set([...participants, userId]));
+    updateDiscussionMutation.mutate({ userIds: updated });
+    setParticipantInput('');
+  };
+
+  const handleRemoveParticipant = (userId: number) => {
+    const updated = participants.filter((idValue) => idValue !== userId);
+    updateDiscussionMutation.mutate({ userIds: updated });
+  };
+
+  const handleLeave = () => {
+    if (!currentUserId) {
+      return;
+    }
+    const updated = participants.filter((idValue) => idValue !== currentUserId);
+    updateDiscussionMutation.mutate({ userIds: updated });
+  };
+
+  const contacts = listContacts();
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -86,6 +144,17 @@ const DiscussionDetail = () => {
           {participants.map((participant) => (
             <Badge key={participant}>User {participant}</Badge>
           ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setSettingsOpen(true)}>
+            Discussion settings
+          </Button>
+          <Button variant="ghost" onClick={handleLeave}>
+            Quitter la discussion
+          </Button>
+          <Button variant="ghost" onClick={() => deleteDiscussionMutation.mutate()}>
+            Supprimer la discussion
+          </Button>
         </div>
       </div>
 
@@ -127,6 +196,97 @@ const DiscussionDetail = () => {
           </Button>
         </div>
       </Card>
+
+      <Dialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        title="Paramètres de la discussion"
+        description="Ajoute/retire des participants ou gère ton carnet d’adresses."
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold">Ajouter un participant (username ou ID)</label>
+            <div className="flex gap-2">
+              <Input
+                placeholder="ex: alice ou 3"
+                value={participantInput}
+                onChange={(event) => setParticipantInput(event.target.value)}
+              />
+              <Button onClick={handleAddParticipant}>Add</Button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-semibold">Participants actuels</p>
+            <div className="flex flex-wrap gap-2">
+              {participants.map((participant) => (
+                <Badge key={participant} className="flex items-center gap-2">
+                  User {participant}
+                  {participant !== currentUserId && (
+                    <button
+                      className="text-xs text-[var(--color-error)]"
+                      onClick={() => handleRemoveParticipant(participant)}
+                    >
+                      remove
+                    </button>
+                  )}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-semibold">Carnet d’adresses (username → id)</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Input
+                placeholder="username"
+                value={contactUsername}
+                onChange={(event) => setContactUsername(event.target.value)}
+              />
+              <Input
+                placeholder="id"
+                value={contactUserId}
+                onChange={(event) => setContactUserId(event.target.value)}
+              />
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const idValue = Number(contactUserId);
+                if (!contactUsername.trim() || !Number.isInteger(idValue)) {
+                  toast.error('Contact invalide.');
+                  return;
+                }
+                addContact({ username: contactUsername.trim(), userId: idValue });
+                toast.success('Contact enregistré.');
+                setContactUsername('');
+                setContactUserId('');
+              }}
+            >
+              Ajouter un contact
+            </Button>
+            <div className="space-y-2">
+              {contacts.length === 0 && (
+                <p className="text-xs text-[var(--color-muted)]\">Aucun contact enregistré.</p>
+              )}
+              {contacts.map((contact) => (
+                <div key={contact.username} className="flex items-center justify-between text-sm">
+                  <span>
+                    {contact.username} → {contact.userId}
+                  </span>
+                  <button
+                    className="text-xs text-[var(--color-error)]"
+                    onClick={() => {
+                      removeContact(contact.username);
+                      toast.info('Contact supprimé.');
+                    }}
+                  >
+                    remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

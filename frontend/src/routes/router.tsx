@@ -4,6 +4,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Discussions from '../pages/Discussions';
 import DiscussionDetail from '../pages/DiscussionDetail';
+import Admin from '../pages/Admin';
 import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: 'discussions/:id',
         element: <DiscussionDetail />,
+      },
+      {
+        path: 'admin',
+        element: <Admin />,
       },
     ],
   },
