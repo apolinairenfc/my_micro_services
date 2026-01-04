@@ -34,6 +34,8 @@ $container->set('db', function () use ($settings, $rootPath) {
     return $dbFactory($settings);
 });
 
+$container->get('db');
+
 $container->set(JwtService::class, function () use ($settings) {
     return new JwtService($settings['jwt']);
 });

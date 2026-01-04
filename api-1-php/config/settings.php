@@ -2,21 +2,36 @@
 
 declare(strict_types=1);
 
+function envValue(string $key, string $default = ''): string
+{
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return (string) $_SERVER[$key];
+    }
+
+    $value = getenv($key);
+
+    return $value !== false ? (string) $value : $default;
+}
+
 return [
-    'displayErrorDetails' => getenv('APP_DEBUG') === 'true',
+    'displayErrorDetails' => envValue('APP_DEBUG') === 'true',
     'db' => [
         'driver' => 'mysql',
-        'host' => getenv('DB_HOST') ?: '',
-        'port' => getenv('DB_PORT') ?: '',
-        'database' => getenv('DB_NAME') ?: '',
-        'username' => getenv('DB_USER') ?: '',
-        'password' => getenv('DB_PASS') ?: '',
+        'host' => envValue('DB_HOST'),
+        'port' => envValue('DB_PORT'),
+        'database' => envValue('DB_NAME'),
+        'username' => envValue('DB_USER'),
+        'password' => envValue('DB_PASS'),
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
     ],
     'jwt' => [
-        'secret' => getenv('JWT_SECRET') ?: '',
-        'exp' => getenv('JWT_EXP') ?: '',
+        'secret' => envValue('JWT_SECRET'),
+        'exp' => envValue('JWT_EXP'),
     ],
 ];
