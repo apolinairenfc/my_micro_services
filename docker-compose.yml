@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api1:
+    build:
+      context: ./api-1-php
+    restart: unless-stopped
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: 7200
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mysql
+
+  api2:
+    build:
+      context: ./api_discussions_node
+    restart: unless-stopped
+    environment:
+      PORT: 8002
+      MONGO_URI: mongodb://mongo:27017/my_micro_services
+    ports:
+      - "8002:8002"
+    depends_on:
+      - mongo
+
+  api3:
+    build:
+      context: ./api_connector
+    restart: unless-stopped
+    environment:
+      PORT: 8000
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGO: HS256
+      API1_BASE_URL: http://api1:8001
+      API2_BASE_URL: http://api2:8002
+      API1_MESSAGES_DISCUSSION_PARAM: discussionId
+      API_TIMEOUT_MS: 5000
+    ports:
+      - "8004:8000"
+    depends_on:
+      - api1
+      - api2
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://localhost:8004
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api3
+
+volumes:
+  mysql_data:
+  mongo_data:
